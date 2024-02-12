@@ -50,7 +50,6 @@ function draftWithGPT() {
       }
     );
   var data = JSON.parse(response.getContentText());
-  //var completedText = data.choices[0].text;
   var completedText = data.choices[0].message.content
 
   // Don't send emails if a reply is not needed.
