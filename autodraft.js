@@ -1,7 +1,9 @@
 var autodraftedLabel = "autodrafted"
 
 // Change this to match who you are.
-var name = "Samuel Leroy Jackson is an American film and television actor and film producer. After Jackson became involved with the Civil Rights Movement, he moved on to acting in theater at Morehouse College, and then films."
+var name = "Samuel Leroy Jackson is an American film and television actor and film producer. " + 
+  "After Jackson became involved with the Civil Rights Movement, he moved on to acting " + 
+  "in theater at Morehouse College, and then films."
 
 // Add your API_KEY here for OPENAI. Verify below that the code doesn't do anything with it you don't want it to! 
 var API_KEY = "INSERT_OPENAI_API_KEY_HERE"
@@ -19,7 +21,9 @@ function draftWithGPT() {
     return
   }
 
-  var preamble = "You are a helpful personal assistant for " + name + ". You received the email below. If a reply is required, generate a draft reply to use. If a reply is not needed, respond with ***NO REPLY*** instead. \n"
+  var preamble = "You are a helpful personal assistant for " + name + 
+    ". You received the email below. If a reply is required, generate a draft reply to use. " + 
+    "If a reply is not needed, respond with ***NO REPLY*** instead. \n"
   var prompt = "Subject : " + subject + "\n\n" + "Received on : " + date + "\n\n" + text;
 
   var payload = {
