@@ -6,7 +6,7 @@ var name = "Samuel Leroy Jackson is an American film and television actor and fi
 // Add your API_KEY here for OPENAI. Verify below that the code doesn't do anything with it you don't want it to! 
 var API_KEY = "INSERT_OPENAI_API_KEY_HERE"
 
-function draftWithGPT3() {
+function draftWithGPT() {
   var threads = GmailApp.search('category:primary');
   var thread = threads[0]
   var message = thread.getMessages()[0];
@@ -55,7 +55,7 @@ function draftWithGPT3() {
     return;
   }
 
-  // Create a draft reply with "hello" in the same thread.
+  // Create a draft reply
   thread.createDraftReply(completedText);
   addLabelToThread(thread);
   Logger.log("Created draft for subject: " + subject)
