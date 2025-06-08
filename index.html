@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JavaScript Tests</title>
+  <script src="tests.js"></script>
+</head>
+<body>
+  <h1>JavaScript Test Results</h1>
+  <div id="test-results"></div>
+  <script>
+    const resultsDiv = document.getElementById('test-results');
+    try {
+      testAddition(); // Assuming testAddition is defined in tests.js
+      resultsDiv.innerHTML += '<p style="color: green;">testAddition: PASSED</p>';
+    } catch (error) {
+      resultsDiv.innerHTML += `<p style="color: red;">testAddition: FAILED - ${error.message}</p>`;
+    }
+    // Add calls to other test functions here
+  </script>
+</body>
+</html>
