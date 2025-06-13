@@ -8,6 +8,9 @@ var name = "Samuel Leroy Jackson is an American film and television actor and fi
 // Add your GEMINI_API_KEY here. Verify below that the code doesn't do anything with it you don't want it to!
 var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE"
 
+// Optional: Specify a Google Doc ID to load personal context dynamically.
+var CONTEXT_DOC_ID = "";
+
 function draftWithGPT() {
   var threads = GmailApp.search('category:primary');
   var thread = threads[0]
@@ -21,7 +24,26 @@ function draftWithGPT() {
     return
   }
 
-  var preamble = "You are a helpful personal assistant for " + name + 
+  // Initialize personalContext with the default 'name'
+  var personalContext = name;
+
+  // Check if CONTEXT_DOC_ID is set and attempt to load context from Google Doc
+  if (CONTEXT_DOC_ID && CONTEXT_DOC_ID.trim() !== "") {
+    try {
+      var doc = DocumentApp.openById(CONTEXT_DOC_ID);
+      var docText = doc.getBody().getText();
+      if (docText && docText.trim() !== "") {
+        personalContext = docText.trim();
+        Logger.log("Successfully loaded context from Google Doc ID: " + CONTEXT_DOC_ID);
+      } else {
+        Logger.log("Google Doc ID " + CONTEXT_DOC_ID + " was found but is empty. Using default context.");
+      }
+    } catch (e) {
+      Logger.log("Error loading context from Google Doc ID: " + CONTEXT_DOC_ID + ". Error: " + e.message + ". Using default context.");
+    }
+  }
+
+  var preamble = "You are a helpful personal assistant for " + personalContext +
     ". You received the email below. If a reply is required, generate a draft reply to use. " + 
     "If a reply is not needed, respond with ***NO REPLY*** instead. \n";
   var userPrompt = "Subject : " + subject + "\n\n" + "Received on : " + date + "\n\n" + text;
