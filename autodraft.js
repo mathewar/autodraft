@@ -5,8 +5,8 @@ var name = "Samuel Leroy Jackson is an American film and television actor and fi
   "After Jackson became involved with the Civil Rights Movement, he moved on to acting " + 
   "in theater at Morehouse College, and then films."
 
-// Add your API_KEY here for OPENAI. Verify below that the code doesn't do anything with it you don't want it to! 
-var API_KEY = "INSERT_OPENAI_API_KEY_HERE"
+// Add your GEMINI_API_KEY here. Verify below that the code doesn't do anything with it you don't want it to!
+var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE"
 
 function draftWithGPT() {
   var threads = GmailApp.search('category:primary');
@@ -23,34 +23,42 @@ function draftWithGPT() {
 
   var preamble = "You are a helpful personal assistant for " + name + 
     ". You received the email below. If a reply is required, generate a draft reply to use. " + 
-    "If a reply is not needed, respond with ***NO REPLY*** instead. \n"
-  var prompt = "Subject : " + subject + "\n\n" + "Received on : " + date + "\n\n" + text;
+    "If a reply is not needed, respond with ***NO REPLY*** instead. \n";
+  var userPrompt = "Subject : " + subject + "\n\n" + "Received on : " + date + "\n\n" + text;
 
   var payload = {
-    messages : [
-      {"role": "system", "content": preamble},
-      {"role": "user", "content": prompt},
+    contents: [
+      { "role": "user", "parts": [{ "text": preamble }] }, // System prompt as first user message
+      { "role": "user", "parts": [{ "text": userPrompt }] }  // Actual user prompt
     ],
-    "max_tokens": 600,
-    "temperature": 0.7,
-    "n": 1,
-    "model" : "gpt-4"
+    generationConfig: {
+      "maxOutputTokens": 600,
+      "temperature": 0.7,
+      "candidateCount": 1
+    }
   };
 
-  // Make a get request to OpenAI API
-    var response = UrlFetchApp.fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method: "POST",
-        contentType : 'application/json',
-        payload: JSON.stringify(payload),
-        headers: {
-          Authorization: "Bearer " + API_KEY
-        }
-      }
-    );
+  // Make a POST request to Gemini API
+  var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + GEMINI_API_KEY;
+
+  var response = UrlFetchApp.fetch(
+    apiUrl,
+    {
+      method: "POST",
+      contentType: 'application/json',
+      payload: JSON.stringify(payload)
+    }
+  );
   var data = JSON.parse(response.getContentText());
-  var completedText = data.choices[0].message.content
+  // Ensure candidates and parts exist before trying to access them
+  if (data.candidates && data.candidates.length > 0 &&
+      data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts.length > 0) {
+    var completedText = data.candidates[0].content.parts[0].text;
+  } else {
+    Logger.log("Error: Unexpected response structure from Gemini API or no content generated.");
+    Logger.log("Response data: " + JSON.stringify(data));
+    return; // Exit if the response is not as expected
+  }
 
   // Don't send emails if a reply is not needed.
   if (completedText.indexOf("NO REPLY") > -1) {
