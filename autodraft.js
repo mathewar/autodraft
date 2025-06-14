@@ -11,6 +11,9 @@ var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE"
 // Optional: Specify a Google Doc ID to load personal context dynamically.
 var CONTEXT_DOC_ID = "";
 
+// Enable or disable Google Calendar integration.
+var enableCalendarIntegration = true;
+
 function draftWithGemini() {
   var threads = GmailApp.search('category:primary');
   var thread = threads[0]
@@ -43,7 +46,16 @@ function draftWithGemini() {
     }
   }
 
-  var preamble = "You are a helpful personal assistant for " + personalContext +
+  var calendarInfo = ""; // Initialize calendarInfo
+  if (enableCalendarIntegration) {
+    var calendarCsv = getCalendarEvents();
+    // Check if calendarCsv is not empty and not the "no events" message before including it
+    if (calendarCsv && calendarCsv.trim() !== "" && calendarCsv.indexOf("No upcoming events") === -1) {
+      calendarInfo = "User's Calendar (next 30 days):\n" + calendarCsv + "\n\n";
+    }
+  }
+
+  var preamble = calendarInfo + "You are a helpful personal assistant for " + personalContext +
     ". You received the email below. If a reply is required, generate a draft reply to use. " + 
     "If a reply is not needed, respond with ***NO REPLY*** instead. \n";
   var userPrompt = "Subject : " + subject + "\n\n" + "Received on : " + date + "\n\n" + text;
@@ -111,4 +123,52 @@ function doesThreadHaveDrafts(thread) {
     return label.getName() === autodraftedLabel;
   });
   return hasLabel;
+}
+
+function getCalendarEvents() {
+  var now = new Date();
+  var thirtyDaysFromNow = new Date();
+  thirtyDaysFromNow.setDate(now.getDate() + 30);
+  var calendar = CalendarApp.getDefaultCalendar();
+  var events = calendar.getEvents(now, thirtyDaysFromNow);
+  var csvData = "Date,Start Time,End Time,Name,Description,Participants,Location\n"; // Header
+
+  if (events.length === 0) {
+    return "No upcoming events in the next 30 days.\n";
+  }
+
+  for (var i = 0; i < events.length; i++) {
+    var event = events[i];
+    var title = event.getTitle();
+    var startTime = event.getStartTime();
+    var endTime = event.getEndTime();
+    var description = event.getDescription();
+    var guests = event.getGuestList().map(function(guest) { return guest.getEmail(); }).join(", ");
+    var location = event.getLocation();
+
+    // Date formatting
+    var eventDate = startTime.getFullYear() + "-" + ("0" + (startTime.getMonth() + 1)).slice(-2) + "-" + ("0" + startTime.getDate()).slice(-2);
+    // Time formatting
+    var eventStartTime = ("0" + startTime.getHours()).slice(-2) + ":" + ("0" + startTime.getMinutes()).slice(-2);
+    var eventEndTime = ("0" + endTime.getHours()).slice(-2) + ":" + ("0" + endTime.getMinutes()).slice(-2);
+
+    // Clipping text
+    var clipText = function(text, maxLength) {
+      if (!text) return "";
+      if (text.length > maxLength) {
+        return text.substring(0, maxLength - 3) + "...";
+      }
+      return text;
+    };
+
+    var clippedTitle = clipText(title, 100);
+    var clippedDescription = clipText(description, 100);
+    var clippedGuests = clipText(guests, 100); // Assuming guest list might also be very long
+    var clippedLocation = clipText(location, 100);
+
+    csvData += eventDate + "," + eventStartTime + "," + eventEndTime + "," +
+               clippedTitle + "," + clippedDescription + "," +
+               clippedGuests + "," + clippedLocation + "\n";
+  }
+  return csvData;
 }

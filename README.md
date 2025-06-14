@@ -44,3 +44,10 @@ var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE";
     *   **Permissions**: Using this feature requires granting the script permission to access your Google Docs.
 
 Enjoy! Feedback is welcome. Contact the repository owner via email.
+
+## Google Calendar Integration
+This script can integrate with your Google Calendar to provide context for email drafting.
+- When enabled, it fetches events from your default calendar for the next 30 days.
+- This calendar information is then formatted as CSV and included in the prompt sent to the AI.
+- The CSV format is: `Date,Start Time,End Time,Name,Description,Participants,Location`.
+- You can disable this feature by setting the `enableCalendarIntegration` variable in `autodraft.js` to `false`. By default, it is `true`.
