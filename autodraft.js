@@ -11,7 +11,7 @@ var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE"
 // Optional: Specify a Google Doc ID to load personal context dynamically.
 var CONTEXT_DOC_ID = "";
 
-function draftWithGPT() {
+function draftWithGemini() {
   var threads = GmailApp.search('category:primary');
   var thread = threads[0]
   var message = thread.getMessages()[0];
