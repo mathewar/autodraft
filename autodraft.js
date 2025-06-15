@@ -5,9 +5,6 @@ var name = "Samuel Leroy Jackson is an American film and television actor and fi
   "After Jackson became involved with the Civil Rights Movement, he moved on to acting " + 
   "in theater at Morehouse College, and then films."
 
-// Add your GEMINI_API_KEY here. Verify below that the code doesn't do anything with it you don't want it to!
-var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE"
-
 // Optional: Specify a Google Doc ID to load personal context dynamically.
 var CONTEXT_DOC_ID = "";
 
@@ -15,6 +12,7 @@ var CONTEXT_DOC_ID = "";
 var enableCalendarIntegration = true;
 
 function draftWithGemini() {
+  var props = getProperties();
   var threads = GmailApp.search('category:primary');
   var thread = threads[0]
   var message = thread.getMessages()[0];
@@ -73,7 +71,7 @@ function draftWithGemini() {
   };
 
   // Make a POST request to Gemini API
-  var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + GEMINI_API_KEY;
+  var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=" + props.geminiApiKey;
 
   var response = UrlFetchApp.fetch(
     apiUrl,
