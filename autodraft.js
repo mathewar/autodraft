@@ -1,9 +1,7 @@
 var autodraftedLabel = "autodrafted"
 
 // Change this to match who you are.
-var name = "Samuel Leroy Jackson is an American film and television actor and film producer. " + 
-  "After Jackson became involved with the Civil Rights Movement, he moved on to acting " + 
-  "in theater at Morehouse College, and then films."
+var username = "Your full name and any nicknames here"
 
 // Optional: Specify a Google Doc ID to load personal context dynamically.
 var CONTEXT_DOC_ID = "";
@@ -13,7 +11,7 @@ var enableCalendarIntegration = true;
 
 function draftWithGemini() {
   var props = getProperties();
-  var threads = GmailApp.search('category:primary');
+  var threads = GmailApp.search('label:inbox');
   if (!threads || threads.length === 0) {
     Logger.log("No primary threads found.");
     return;
