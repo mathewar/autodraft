@@ -14,14 +14,24 @@ var enableCalendarIntegration = true;
 function draftWithGemini() {
   var props = getProperties();
   var threads = GmailApp.search('category:primary');
-  var thread = threads[0]
-  var message = thread.getMessages()[0];
+  if (!threads || threads.length === 0) {
+    Logger.log("No primary threads found.");
+    return;
+  }
+  var thread = threads[0];
+  var messages = thread.getMessages();
+  if (!messages || messages.length === 0) {
+    Logger.log("No messages found in thread: " + thread.getSubject());
+    return;
+  }
+  var message = messages[0];
   var text = message.getPlainBody();
   var subject = message.getSubject();
   var date = message.getDate().toLocaleString();
   // Don't bother to draft if there are drafts already.
+  // Use thread.getSubject() for logging consistently before 'subject' is defined from message
   if (doesThreadHaveDrafts(thread)) {
-    Logger.log("Already autodrafted : " + subject)
+    Logger.log("Already autodrafted : " + thread.getSubject());
     return
   }
 
