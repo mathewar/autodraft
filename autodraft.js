@@ -1,7 +1,7 @@
 var autodraftedLabel = "autodrafted"
 
 // Change this to match who you are.
-var username = "Your full name and any nicknames here"
+var name = "Your full name and any nicknames here"
 
 // Optional: Specify a Google Doc ID to load personal context dynamically.
 var CONTEXT_DOC_ID = "";
