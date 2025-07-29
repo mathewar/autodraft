@@ -14,7 +14,7 @@ Note: This script uses the Google Gemini API (`gemini-1.5-flash-latest`).
 
 1.  **Set your API Key**:
     *   Obtain a Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-    *   In `autodraft.js`, find the line `var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE";` and replace `"INSERT_GEMINI_API_KEY_HERE"` with your actual API key.
+    *   In the Google Apps Script project, go to "Project Settings" and add a script property with the name `GOOGLE_API_KEY` and your API key as the value.
 
 2.  **Update Personal Information**:
     *   In `autodraft.js`, modify the `name` variable to include your biographical information. This information is used to personalize the drafted replies.
@@ -24,9 +24,6 @@ var autodraftedLabel = "autodrafted";
 
 // Change this to match who you are.
 var name = "YOUR_NAME_AND_BIOGRAPHICAL_INFORMATION_HERE";
-
-// Add your GEMINI_API_KEY here.
-var GEMINI_API_KEY = "INSERT_GEMINI_API_KEY_HERE";
 ```
 
 3.  **(Optional) Dynamic Personal Context via Google Doc**:
